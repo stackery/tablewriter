@@ -18,7 +18,12 @@ import (
 var ansi = regexp.MustCompile("\033\\[(?:[0-9]{1,3}(?:;[0-9]{1,3})*)?[m|K]")
 
 func DisplayWidth(str string) int {
-	return runewidth.StringWidth(ansi.ReplaceAllLiteralString(str, ""))
+	// Modification to count colors as part of width
+	tempStr := []byte(str)
+	cesc := regexp.MustCompile(`\x1b\[\d+(;\d+)*m`)
+	len := runewidth.StringWidth(string(cesc.ReplaceAll(tempStr, []byte(""))))
+
+	return len
 }
 
 // Simple Condition for string
